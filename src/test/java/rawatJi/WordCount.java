@@ -14,6 +14,7 @@ import java.io.IOException;
            public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
              private final static IntWritable one = new IntWritable(1);
              private Text word = new Text();
+
         
              public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> output, Reporter reporter) throws IOException {
                String line = value.toString();
@@ -21,6 +22,8 @@ import java.io.IOException;
                while (tokenizer.hasMoreTokens()) {
                  word.set(tokenizer.nextToken());
                  output.collect(word, one);
+                 
+
                }
              }
            }
@@ -39,6 +42,8 @@ import java.io.IOException;
           public static void main(String[] args) throws Exception {
             JobConf conf = new JobConf(WordCount.class);
             conf.setJobName("wordcount");
+            conf.setJar("WordCountSingle.jar");		//This was added to get rid of now finding .. inner class
+
        
             conf.setOutputKeyClass(Text.class);
             conf.setOutputValueClass(IntWritable.class);
@@ -50,8 +55,8 @@ import java.io.IOException;
             conf.setInputFormat(TextInputFormat.class);
             conf.setOutputFormat(TextOutputFormat.class);
        
-            FileInputFormat.setInputPaths(conf, new Path(args[0]));
-            FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+            FileInputFormat.setInputPaths(conf, new Path(args[1]));
+            FileOutputFormat.setOutputPath(conf, new Path(args[2]));
        
             JobClient.runJob(conf);
           }
